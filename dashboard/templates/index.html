@@ -191,6 +191,7 @@ const latCol=ms=>ms>50?'var(--red)':ms>20?'var(--yellow)':ms>0?'var(--text)':'va
 const busyCol=p=>p>80?'var(--red)':p>40?'var(--yellow)':p>5?'var(--text)':'var(--text2)';
 const scoreCol=s=>s>=80?'var(--green)':s>=50?'var(--yellow)':'var(--red)';
 const scoreBg=s=>s>=80?'rgba(34,197,94,.12)':s>=50?'rgba(234,179,8,.12)':'rgba(239,68,68,.12)';
+const scoreLabel=s=>{if(typeof s!=='number')return'';return s>=90?'Excellent':s>=80?'Good':s>=50?'Fair':s>=25?'Poor':'Critical'};
 const relTime=ts=>{const s=Math.floor(Date.now()/1000-ts);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'};
 const fmtUptime=sec=>{if(!sec)return'';const d=Math.floor(sec/86400),h=Math.floor((sec%86400)/3600);return d>0?d+'d '+h+'h':h+'h '+Math.floor((sec%3600)/60)+'m'};
 const SEAGATE=new Set([1,7,195]);
@@ -368,7 +369,7 @@ function renderDisks(disks){
         const ht=d.health===true?'PASSED':d.health===false?'FAILED':'N/A';
         const hs=d.health_score!=null?d.health_score:'-';
         return`<div class="card" style="padding:1rem">
-            <div class="disk-header"><div><span class="disk-name">/dev/${d.name}</span>${d.pool?`<span style="font-size:.65rem;color:var(--text2);margin-left:.35rem">${d.pool}</span>`:''}</div><div style="display:flex;gap:.25rem;align-items:center"><span class="score-badge" style="background:${scoreBg(hs)};color:${scoreCol(hs)}">${hs}</span><span class="${dtc}">${proto||'?'}</span><span class="hb ${d.health===true?'h-on':d.health===false?'h-flt':'h-unk'}">${ht}</span></div></div>
+            <div class="disk-header"><div><span class="disk-name">/dev/${d.name}</span>${d.pool?`<span style="font-size:.65rem;color:var(--text2);margin-left:.35rem">${d.pool}</span>`:''}</div><div style="display:flex;gap:.25rem;align-items:center"><span class="score-badge" title="Health Score: ${hs}/100 — ${scoreLabel(hs)}" style="background:${scoreBg(hs)};color:${scoreCol(hs)}">${hs}/100 ${scoreLabel(hs)}</span><span class="${dtc}">${proto||'?'}</span><span class="hb ${d.health===true?'h-on':d.health===false?'h-flt':'h-unk'}">${ht}</span></div></div>
             <div class="disk-stats">
                 <div class="ds"><div class="ds-l">Capacity</div><div class="ds-v">${B(d.user_capacity||d.size)}</div></div>
                 <div class="ds"><div class="ds-l">Temp</div><div class="ds-v ${tc(d.temperature)}">${d.temperature!=null?d.temperature+'°C':'—'}</div></div>
@@ -400,7 +401,7 @@ function openSmartModal(idx){
     }
     if(d.grown_defect_count!=null)sasHtml+=`<div style="margin-top:.4rem;font-size:.75rem"><strong>Grown Defects:</strong> <span style="color:${d.grown_defect_count>0?'var(--red)':'var(--green)'};font-weight:600">${d.grown_defect_count}</span></div>`;
     document.getElementById('smart-modal-content').innerHTML=`
-        <h2><span>/dev/${d.name}</span><span class="score-badge" style="background:${scoreBg(hs)};color:${scoreCol(hs)}">${hs}/100</span><span class="${dtc}">${proto}</span><span class="hb ${d.health===true?'h-on':d.health===false?'h-flt':'h-unk'}">${ht}</span></h2>
+        <h2><span>/dev/${d.name}</span><span class="score-badge" title="Health Score: ${hs}/100 — ${scoreLabel(hs)}" style="background:${scoreBg(hs)};color:${scoreCol(hs)}">${hs}/100 ${scoreLabel(hs)}</span><span class="${dtc}">${proto}</span><span class="hb ${d.health===true?'h-on':d.health===false?'h-flt':'h-unk'}">${ht}</span></h2>
         <div class="si-grid">
             <div class="si-item"><div class="si-l">Model</div><div class="si-v">${d.device_model||d.model||'—'}</div></div>
             <div class="si-item"><div class="si-l">Serial</div><div class="si-v">${d.serial_number||d.serial||'—'}</div></div>

@@ -2,21 +2,28 @@
 
 Real-time ZFS & disk monitoring for home server racks. Built to watch over multiple nodes with dozens of drives, streaming SMART health, ZFS pool status, I/O rates, and temperatures to a single dashboard over WebSocket. Alerts go to Gotify.
 
+
 ## Why
 
 Every time I looked for a way to keep tabs on disk health across all the nodes in my home rack, the answer was always the same stack: Grafana, Telegraf, Prometheus, maybe throw InfluxDB in there too. That is an absurd amount of infrastructure just to answer "are my drives dying?" I didn't need time-series databases and query languages and dashboarding frameworks. I needed something that tells me if a disk is getting hot, if a ZFS pool is degraded, or if SMART errors are creeping up, across every machine, in one place.
 
 Nothing out there was built for this. Everything either does way too much or only monitors the local machine. So I wrote ZPulse. It is purpose-built for home racks: lightweight agents that stream disk and ZFS telemetry over a single WebSocket connection to one central dashboard. No metric pipelines, no config files longer than the code itself, no containers, no databases. Just a Python agent on each node and a dashboard on whatever box you have lying around.
 
+
 ## Preview
+
 ###### Overview
+
 ![](./.screens/preview.png)
 
 ###### Individual Node Monitoring
+
 ![](./.screens/preview2.png)
 
 ###### SMART Metadata parsing
+
 ![](./.screens/preview3.png)
+
 
 ## Architecture
 
@@ -29,6 +36,7 @@ Nothing out there was built for this. Everything either does way too much or onl
 - `agent.py` runs on each server as root, collects disk/ZFS/SMART/I/O data, & streams it to the dashboard
 - `dashboard.py` runs on a central machine *(Raspberry Pi, NUC, whatever)*, aggregates data from all agents, & serves the web UI
 - All data flows over persistent WebSocket connections, no polling
+
 
 ## Dashboard Setup
 
@@ -77,9 +85,11 @@ pip install -r requirements.txt
 sudo ./venv/bin/python agent.py ws://DASHBOARD_IP:8888/ws/agent
 ```
 
+
 ## Gotify Notifications
 
 Open the dashboard in a browser, click Settings. Enter your Gotify server URL and app token, hit Test, then Save. Alert thresholds for temperature, space usage, SMART failures, and pool health are all configured from the same panel.
+
 
 ## What It Monitors
 
