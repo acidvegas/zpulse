@@ -493,7 +493,7 @@ function connectWS(){
 function handleMessage(msg){
     switch(msg.type){
         case 'servers':
-            servers=msg.servers;
+            servers=(msg.servers||[]).sort((a,b)=>a.hostname.localeCompare(b.hostname,undefined,{numeric:true}));
             updateServerSelect();
             if(!selectedServer)renderFleet();
             break;
