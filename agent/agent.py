@@ -58,6 +58,7 @@ cache = {
 	'io_rates'    : {},
 	'pool_map'    : {},
 	'system_info' : {},
+	'log_errors'  : [],
 }
 
 _prev_diskstats = {}
@@ -216,6 +217,16 @@ def compute_health_score(disk: dict):
 	gdc = disk.get('grown_defect_count')
 	if isinstance(gdc, (int, float)) and gdc > 0:
 		score -= min(30, int(gdc) * 3)
+	mh = disk.get('media_health')
+	if mh:
+		if mh.get('life_used_pct'):
+			score -= min(40, mh['life_used_pct'] * 0.4)
+		if mh.get('pre_eol') == 'urgent':
+			score -= 30
+		elif mh.get('pre_eol') == 'warning':
+			score -= 15
+		if mh.get('read_only'):
+			score -= 50
 	if disk.get('health') is False:
 		score = min(score, 10)
 	return max(0, min(100, int(score)))
@@ -308,11 +319,140 @@ def collect_udev_info(device: str):
 	return info
 
 
+def sysfs_read(path: str):
+	'''Read a sysfs file, returning stripped contents or empty string.'''
+
+	try:
+		with open(path) as f:
+			return f.read().strip()
+	except Exception:
+		return ''
+
+
+def classify_media(dev: dict):
+	'''
+	Classify a disk into a physical media type: nvme, ssd, hdd, usb, sd, or emmc.
+
+	:param dev: Disk dict with name, transport, rotational, removable
+	'''
+
+	name = dev.get('name', '')
+	tran = (dev.get('transport') or '').lower()
+	if name.startswith('nvme'):
+		return 'nvme'
+	if name.startswith('mmcblk'):
+		t = sysfs_read(f'/sys/block/{name}/device/type').upper()
+		return 'sd' if t == 'SD' else 'emmc' if t == 'MMC' else 'sd'
+	if tran == 'usb' or dev.get('removable'):
+		return 'usb'
+	if dev.get('rotational') is False:
+		return 'ssd'
+	if dev.get('rotational') is True:
+		return 'hdd'
+	return 'unknown'
+
+
+def collect_media_health(name: str, media: str):
+	'''
+	Collect wear/identity info for non-SMART media (SD/eMMC/USB) from sysfs.
+	SD cards expose no wear telemetry; eMMC exposes life_time; USB exposes little.
+
+	:param name: Block device name (e.g. mmcblk0, sde)
+	:param media: Media type from classify_media
+	'''
+
+	base = f'/sys/block/{name}/device'
+	info = {'read_only': sysfs_read(f'/sys/block/{name}/ro') == '1'}
+	if media in ('sd', 'emmc'):
+		info['card_name'] = sysfs_read(f'{base}/name')
+		info['card_type'] = sysfs_read(f'{base}/type')
+		info['manfid']    = sysfs_read(f'{base}/manfid')
+		info['date']      = sysfs_read(f'{base}/date')
+		lt = sysfs_read(f'{base}/life_time')   # eMMC: two hex est values, 0x0N == N*10% consumed
+		if lt:
+			try:
+				vals = [int(x, 16) for x in lt.split()]
+				worst = max(v for v in vals if v)
+				info['life_used_pct'] = min(100, (worst - 1) * 10) if worst else 0
+				info['life_exhausted'] = worst >= 11
+			except (ValueError, TypeError):
+				pass
+			info['life_raw'] = lt
+		pre = sysfs_read(f'{base}/pre_eol_info')   # eMMC: 0x01 normal, 0x02 warning, 0x03 urgent
+		if pre:
+			info['pre_eol'] = {'0x01': 'normal', '0x02': 'warning', '0x03': 'urgent'}.get(pre, pre)
+	return info
+
+
+def collect_disk_roles(pool_map: dict):
+	'''
+	Map each physical disk to its role(s): os (hosts /), boot (hosts /boot*), or
+	pool member. Resolves partitions, LVM, and ZFS-root back to physical disks.
+
+	:param pool_map: Device-to-pool mapping from collect_pool_mapping
+	'''
+
+	BOOT_MNTS = {'/boot', '/boot/efi', '/boot/firmware', '/efi'}
+	roles = {}
+
+	def walk(node, top):
+		mp = node.get('mountpoint') or ''
+		if mp == '/':
+			roles.setdefault(top, set()).add('os')
+		elif mp in BOOT_MNTS:
+			roles.setdefault(top, set()).add('boot')
+		for child in node.get('children', []):
+			walk(child, top)
+
+	out, _, rc = run_cmd(['lsblk', '-J', '-o', 'NAME,TYPE,MOUNTPOINT'])
+	if rc == 0:
+		try:
+			for dev in json.loads(out).get('blockdevices', []):
+				if dev.get('type') == 'disk':
+					walk(dev, dev['name'])
+		except (json.JSONDecodeError, ValueError):
+			pass
+
+	# ZFS-root: findmnt reports a dataset (no /dev prefix) -> mark that pool's disks as os
+	src, _, _ = run_cmd(['findmnt', '-n', '-o', 'SOURCE', '/'])
+	src = src.strip()
+	if src and not src.startswith('/dev'):
+		root_pool = src.split('/')[0]
+		for dev, pool in pool_map.items():
+			if pool == root_pool:
+				roles.setdefault(dev, set()).add('os')
+
+	return {k: sorted(v) for k, v in roles.items()}
+
+
+def collect_log_errors():
+	'''Scan the kernel ring buffer for recent storage/filesystem/ZFS errors.'''
+
+	out, _, rc = run_cmd(['dmesg', '-T', '--level=err,crit,alert,emerg'], timeout=10)
+	if rc != 0:
+		out, _, rc = run_cmd(['dmesg', '-T'], timeout=10)
+		if rc != 0:
+			return []
+	pat = re.compile(r'I/O error|medium error|hardware error|read error|write error|uncorrect|sense key|failed command|ATA bus error|reset\b|link is (down|slow)|SMART| zio | pool | vdev |degraded|FAULTED|checksum|EXT4-fs error|XFS.*error|filesystem.*error|mmc\d|card.*error|controller reset', re.IGNORECASE)
+	errors, seen = [], set()
+	for line in out.splitlines()[-600:]:
+		m = re.match(r'\[(.*?)\]\s*(.*)', line)
+		ts_txt, msg = (m.group(1), m.group(2)) if m else ('', line.strip())
+		if not msg or not pat.search(msg):
+			continue
+		key = re.sub(r'\d+', '#', msg)[:110]
+		if key in seen:
+			continue
+		seen.add(key)
+		errors.append({'time': ts_txt, 'message': msg[:280]})
+	return errors[-60:]
+
+
 def collect_disks():
 	'''Enumerate physical disks via lsblk and collect SMART data in parallel.'''
 
 	logging.info('Collecting disk information...')
-	out, _, rc = run_cmd(['lsblk', '-d', '-b', '-o', 'NAME,SIZE,MODEL,SERIAL,ROTA,TRAN,TYPE', '-J'])
+	out, _, rc = run_cmd(['lsblk', '-d', '-b', '-o', 'NAME,SIZE,MODEL,SERIAL,ROTA,TRAN,TYPE,RM', '-J'])
 	if rc != 0:
 		logging.warning('lsblk failed (rc=%d)', rc)
 		return []
@@ -334,6 +474,7 @@ def collect_disks():
 			'model'      : (dev.get('model') or '').strip() or 'Unknown',
 			'serial'     : (dev.get('serial') or '').strip() or 'Unknown',
 			'rotational' : bool(dev.get('rota')),
+			'removable'  : bool(dev.get('rm')),
 			'transport'  : dev.get('tran') or 'unknown',
 			'pool'       : pool_map.get(name, ''),
 		})
@@ -351,6 +492,7 @@ def collect_disks():
 				except Exception as e:
 					logging.warning('SMART failed for %s: %s', disk['name'], e)
 
+	roles = collect_disk_roles(pool_map)
 	for d in devs:
 		if not d.get('model_family') or not d.get('protocol'):
 			udev = collect_udev_info(d['path'])
@@ -360,6 +502,10 @@ def collect_disks():
 				d['protocol'] = udev['protocol']
 		if not d.get('protocol') and d.get('transport'):
 			d['protocol'] = d['transport'].upper()
+		d['media_type'] = classify_media(d)
+		d['roles']      = roles.get(d['name'], [])
+		if d['media_type'] in ('sd', 'emmc', 'usb'):
+			d['media_health'] = collect_media_health(d['name'], d['media_type'])
 		d['health_score'] = compute_health_score(d)
 
 	with lock:
@@ -569,7 +715,7 @@ def collect_iostat():
 				if len(parts) < 14:
 					continue
 				name = parts[2]
-				if not re.match(r'^(sd[a-z]+|nvme\d+n\d+|dm-\d+|vd[a-z]+|xvd[a-z]+)$', name):
+				if not re.match(r'^(sd[a-z]+|nvme\d+n\d+|mmcblk\d+|dm-\d+|vd[a-z]+|xvd[a-z]+)$', name):
 					continue
 				current[name] = {
 					'read_ios'      : int(parts[3]),
@@ -629,11 +775,13 @@ def background_worker():
 				pools     = collect_pools()
 				datasets, snapshots = collect_datasets_and_snapshots()
 				sys_info  = collect_system_info()
+				log_errs  = collect_log_errors()
 				with lock:
 					cache['pools']       = pools
 					cache['datasets']    = datasets
 					cache['snapshots']   = snapshots
 					cache['system_info'] = sys_info
+					cache['log_errors']  = log_errs
 
 			if tick % (SMART_INTERVAL // IO_INTERVAL) == 0:
 				disks = collect_disks()
@@ -667,14 +815,16 @@ async def ws_sender(ws):
 		snaps_msg    = json.dumps({'type': 'snapshots', 'ts': time.time(), 'snapshots': cache['snapshots']})
 		disks_msg    = json.dumps({'type': 'disks',     'ts': time.time(), 'disks': cache['disks']})
 		system_msg   = json.dumps({'type': 'system',    'ts': time.time(), 'info': cache['system_info']})
+		logs_msg     = json.dumps({'type': 'logs',      'ts': time.time(), 'errors': cache['log_errors']})
 
 	await ws.send(system_msg)
 	await ws.send(pools_msg)
 	await ws.send(datasets_msg)
 	await ws.send(snaps_msg)
 	await ws.send(disks_msg)
+	await ws.send(logs_msg)
 	await ws.send(io_msg)
-	logging.info('Initial burst sent (system, pools, datasets, snapshots, disks, io)')
+	logging.info('Initial burst sent (system, pools, datasets, snapshots, disks, logs, io)')
 
 	tick = 0
 	while True:
@@ -691,10 +841,12 @@ async def ws_sender(ws):
 				datasets_msg = json.dumps({'type': 'datasets',  'ts': time.time(), 'datasets': cache['datasets']})
 				snaps_msg    = json.dumps({'type': 'snapshots', 'ts': time.time(), 'snapshots': cache['snapshots']})
 				system_msg   = json.dumps({'type': 'system',    'ts': time.time(), 'info': cache['system_info']})
+				logs_msg     = json.dumps({'type': 'logs',      'ts': time.time(), 'errors': cache['log_errors']})
 			await ws.send(pools_msg)
 			await ws.send(datasets_msg)
 			await ws.send(snaps_msg)
 			await ws.send(system_msg)
+			await ws.send(logs_msg)
 
 		if tick % (SMART_INTERVAL // IO_INTERVAL) == 0:
 			with lock:

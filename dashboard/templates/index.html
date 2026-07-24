@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ZPulse</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%233b82f6'/><text x='16' y='23' text-anchor='middle' fill='white' font-size='20' font-weight='bold' font-family='sans-serif'>Z</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2314b8a6'/><text x='16' y='23' text-anchor='middle' fill='white' font-size='20' font-weight='bold' font-family='sans-serif'>Z</text></svg>">
 <style>
-:root{--bg:#06090f;--surface:#0d1420;--surface2:#131c2e;--surface3:#192436;--border:#1e2d44;--text:#d4dae6;--text2:#7a879e;--accent:#3b82f6;--accent2:#2563eb;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--orange:#f97316;--cyan:#06b6d4;--purple:#a855f7;--radius:8px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--mono:'SF Mono','Cascadia Code','Fira Code',monospace}
+:root{--bg:#0a0a0b;--surface:#121214;--surface2:#1a1a1d;--surface3:#242428;--border:#2b2b31;--text:#eaeaec;--text2:#8a8a93;--accent:#14b8a6;--accent2:#2dd4bf;--green:#3fb950;--yellow:#d29922;--red:#f85149;--orange:#db6d28;--cyan:#38bdf8;--purple:#a371f7;--radius:10px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--mono:'SF Mono','Cascadia Code','Fira Code',monospace}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scrollbar-color:var(--surface3) var(--bg)}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
 a{color:var(--accent);text-decoration:none}
-nav{position:sticky;top:0;z-index:100;background:rgba(13,20,32,.85);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:46px;gap:1rem;backdrop-filter:blur(16px)}
+nav{position:sticky;top:0;z-index:100;background:rgba(16,16,18,.8);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:46px;gap:1rem;backdrop-filter:blur(16px)}
 nav .logo{font-weight:700;font-size:.95rem;color:var(--accent);white-space:nowrap}
 nav .conn{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s}
 nav .nav-links{display:flex;gap:.1rem;margin-left:auto}
@@ -44,9 +44,6 @@ section{margin-bottom:1.5rem}
 .overview-bar .ob-bar-fill{height:100%;border-radius:2px;transition:width .5s}
 .stat-bar{height:4px;border-radius:2px;background:var(--surface3);margin-top:.35rem;overflow:hidden}
 .stat-bar-fill{height:100%;border-radius:2px;transition:width .5s}
-.fleet-card{cursor:pointer;transition:border-color .2s,transform .15s}
-.fleet-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.fleet-card.offline{opacity:.6}
 .pool-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
 .pool-header:hover{opacity:.8}
 .pool-header .pool-toggle{font-size:.6rem;color:var(--text2);margin-right:.4rem;transition:transform .2s}
@@ -56,7 +53,7 @@ section{margin-bottom:1.5rem}
 .pool-body-inner{padding-top:.6rem}
 .pool-name{font-size:.95rem;font-weight:600;font-family:var(--mono)}
 .hb{font-size:.65rem;padding:.12rem .45rem;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.h-on{background:rgba(34,197,94,.12);color:var(--green)}.h-deg{background:rgba(234,179,8,.12);color:var(--yellow)}.h-flt{background:rgba(239,68,68,.12);color:var(--red)}.h-unk{background:rgba(122,135,158,.12);color:var(--text2)}
+.h-on{background:rgba(63,185,80,.13);color:var(--green)}.h-deg{background:rgba(210,153,34,.14);color:var(--yellow)}.h-flt{background:rgba(248,81,73,.14);color:var(--red)}.h-unk{background:rgba(138,138,147,.12);color:var(--text2)}
 .pool-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(85px,1fr));gap:.4rem;margin-bottom:.6rem}
 .ps-l{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}.ps-v{font-size:.85rem;font-weight:600;font-family:var(--mono)}
 .vdev-tree{font-family:var(--mono);font-size:.72rem;margin-top:.4rem}
@@ -115,8 +112,67 @@ section{margin-bottom:1.5rem}
 .st .attr-warn{color:var(--yellow)}.st .attr-crit{color:var(--red);font-weight:600}.st .attr-note{color:var(--text2);font-style:italic;font-size:.62rem}
 .empty{text-align:center;padding:1.25rem;color:var(--text2);font-size:.82rem}
 .tc{color:var(--green)}.tw{color:var(--yellow)}.th{color:var(--red)}
-@media(max-width:1024px){.g5{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}.pool-stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:640px){nav .nav-links{display:none}main{padding:.75rem}.g5,.g4,.g3{grid-template-columns:1fr 1fr}}
+.mb{font-size:.58rem;padding:.1rem .38rem;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.mb-hdd{background:rgba(122,135,158,.16);color:#9aa7be}.mb-ssd{background:rgba(34,197,94,.14);color:var(--green)}.mb-nvme{background:rgba(6,182,212,.14);color:var(--cyan)}.mb-usb{background:rgba(249,115,22,.16);color:var(--orange)}.mb-sd,.mb-emmc{background:rgba(168,85,247,.14);color:var(--purple)}.mb-unknown{background:rgba(122,135,158,.12);color:var(--text2)}
+.rb{font-size:.54rem;padding:.06rem .3rem;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;border:1px solid var(--border);color:var(--text2);white-space:nowrap}
+.rb-boot{border-color:var(--orange);color:var(--orange)}.rb-os{border-color:var(--accent);color:var(--accent)}.rb-pool{border-color:var(--green);color:var(--green)}
+.banner{position:sticky;top:46px;z-index:90;margin:-1rem -1.5rem 1.1rem;padding:.6rem 1.5rem;display:none;align-items:center;gap:.75rem;font-size:.82rem;font-weight:600;border-bottom:1px solid}
+.banner.crit{display:flex;background:rgba(239,68,68,.14);border-color:var(--red);color:#ffb4b4}
+.banner.warn{display:flex;background:rgba(234,179,8,.11);border-color:var(--yellow);color:#f2df8f}
+.banner .b-pulse{width:9px;height:9px;border-radius:50%;background:currentColor;animation:pulse 1.4s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.banner .b-links{margin-left:auto;display:flex;gap:.75rem;font-size:.72rem}.banner .b-links span{cursor:pointer;text-decoration:underline}
+.log-list{display:flex;flex-direction:column;gap:.25rem;max-height:340px;overflow-y:auto}
+.log-item{display:grid;grid-template-columns:150px 1fr;gap:.6rem;padding:.32rem .6rem;border-radius:5px;font-size:.72rem;background:rgba(239,68,68,.05);border-left:3px solid var(--red);font-family:var(--mono)}
+.log-item .lt{color:var(--text2);font-size:.64rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.log-item .lm{color:#efbcbc;word-break:break-word}
+.mh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:.35rem;margin-top:.5rem}
+.wear-bar{height:6px;border-radius:3px;background:var(--surface3);overflow:hidden;margin-top:.3rem}.wear-fill{height:100%;border-radius:3px;transition:width .5s}
+.kpi-strip{display:flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.9rem;overflow:hidden}
+.kpi{display:flex;flex-direction:column;justify-content:center;gap:.2rem;padding:.7rem 1.15rem;flex:1;min-width:118px;border-left:1px solid var(--border)}
+.kpi:first-child{border-left:none}
+.kpi-l{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em}
+.kpi-v{font-size:1.25rem;font-weight:600;font-family:var(--mono);letter-spacing:-.02em;line-height:1.1}
+.kpi-v small{font-size:.72rem;color:var(--text2);font-weight:400}
+.kpi-sub{font-size:.62rem;color:var(--text2)}
+.storage-panel{display:flex;align-items:center;gap:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem 1.4rem;margin-bottom:1.5rem}
+.donut-wrap{position:relative;width:132px;height:132px;flex-shrink:0}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-center .dc-pct{font-size:1.6rem;font-weight:700;font-family:var(--mono);letter-spacing:-.03em;line-height:1}
+.donut-center .dc-sub{font-size:.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:.1em;margin-top:.15rem}
+.sp-detail{flex:1;min-width:0}
+.sp-title{font-size:.95rem;font-weight:600}
+.sp-sub{font-size:.72rem;color:var(--text2);margin-top:.12rem}
+.sp-figure{display:flex;align-items:baseline;gap:.5rem;font-family:var(--mono);margin:.75rem 0 .55rem}
+.sp-figure #sp-used{font-size:1.75rem;font-weight:700;letter-spacing:-.03em}
+.sp-figure .sp-of{font-size:.8rem;color:var(--text2)}
+.sp-figure #sp-cap{font-size:1rem;color:var(--text2)}
+.sp-bar{height:8px;border-radius:5px;background:var(--surface3);overflow:hidden}
+.sp-bar-fill{height:100%;border-radius:5px;transition:width .6s}
+.sp-legend{display:flex;gap:1.5rem;margin-top:.75rem;font-size:.72rem;font-family:var(--mono);flex-wrap:wrap}
+.sp-legend span{display:flex;align-items:center;gap:.4rem;color:var(--text2)}
+.sp-legend b{color:var(--text);font-weight:600}
+.sp-legend i{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.node-list{display:flex;flex-direction:column;gap:.5rem}
+.node-row{display:grid;grid-template-columns:12px minmax(150px,1.3fr) 2fr auto auto;gap:1.3rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem 1.1rem;cursor:pointer;transition:border-color .15s,background .15s}
+.node-row:hover{border-color:var(--accent);background:var(--surface2)}
+.node-row.offline{opacity:.5}
+.node-row.degraded{border-color:rgba(248,81,73,.5)}
+.nr-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.nr-name{display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.nr-host{font-weight:600;font-family:var(--mono);font-size:.95rem}
+.nr-cpu{font-size:.64rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nr-usage{min-width:0}
+.nr-usage-top{display:flex;justify-content:space-between;gap:.5rem;font-size:.72rem;font-family:var(--mono);margin-bottom:.32rem}
+.nr-usage-top .nr-pct{color:var(--text2)}
+.nr-usage-empty{font-size:.72rem;color:var(--text2);font-family:var(--mono)}
+.nr-bar{height:6px;border-radius:4px;background:var(--surface3);overflow:hidden}
+.nr-bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.nr-metrics{display:flex;gap:1.4rem}
+.nr-metric{display:flex;flex-direction:column;gap:.12rem;text-align:right;min-width:42px}
+.nr-ml{font-size:.56rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.nr-mv{font-size:.82rem;font-family:var(--mono);font-weight:600}
+@media(max-width:1024px){.g5{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}.pool-stats{grid-template-columns:repeat(3,1fr)}.storage-panel{flex-direction:column;align-items:stretch;text-align:center}.storage-panel .donut-wrap{margin:0 auto}.sp-figure,.sp-legend{justify-content:center}.node-row{display:flex;flex-wrap:wrap;gap:.7rem 1rem}.nr-name{flex:1}.nr-usage{flex-basis:100%;order:5}}
+@media(max-width:640px){nav .nav-links{display:none}main{padding:.75rem}.g5,.g4,.g3{grid-template-columns:1fr 1fr}.kpi{min-width:45%}.nr-metrics{display:none}}
 </style>
 </head>
 <body>
@@ -127,22 +183,37 @@ section{margin-bottom:1.5rem}
 </select>
 <div class="conn" id="conn-dot" title="Disconnected"></div>
 <div class="nav-links" id="detail-nav" style="display:none">
-    <a href="#disks-section">Disks</a><a href="#pools">Pools</a><a href="#datasets">Datasets</a><a href="#io">I/O</a><a href="#ram-section">RAM</a>
+    <a href="#disks-section">Disks</a><a href="#pools">Pools</a><a href="#datasets">Datasets</a><a href="#io">I/O</a><a href="#logs-section">Errors</a><a href="#ram-section">RAM</a>
 </div>
 <button class="btn btn-ghost btn-sm" onclick="openSettings()">Settings</button>
 </nav>
 <main>
+<div class="banner" id="degraded-banner"></div>
 <!-- Fleet Overview -->
 <section id="fleet">
-    <div class="section-title">Server Fleet <span class="badge h-on" id="fleet-count">0</span></div>
-    <div class="grid g3" id="fleet-cards"><div class="empty">Waiting for agents to connect...</div></div>
+    <div class="kpi-strip" id="kpi-strip"></div>
+    <div class="storage-panel">
+        <div class="donut-wrap">
+            <canvas id="fleet-donut"></canvas>
+            <div class="donut-center"><div class="dc-pct" id="donut-pct">—</div><div class="dc-sub">used</div></div>
+        </div>
+        <div class="sp-detail">
+            <div class="sp-title">Cluster Storage</div>
+            <div class="sp-sub" id="sp-sub">ZFS pool capacity across the fleet</div>
+            <div class="sp-figure"><span id="sp-used">—</span><span class="sp-of">of</span><span id="sp-cap">—</span></div>
+            <div class="sp-bar"><div class="sp-bar-fill" id="sp-bar-fill"></div></div>
+            <div class="sp-legend" id="sp-legend"></div>
+        </div>
+    </div>
+    <div class="section-title">Nodes <span class="badge h-on" id="fleet-count">0</span></div>
+    <div class="node-list" id="fleet-cards"><div class="empty">Waiting for agents to connect...</div></div>
 </section>
 
 <!-- Per-server detail (hidden until a server is selected) -->
 <div id="server-detail" style="display:none">
 <section id="disks-section">
     <div class="section-title">Physical Disks <span class="badge h-on" id="disk-count-badge"></span></div>
-    <div class="card" style="overflow-x:auto"><table class="tbl disk-tbl"><thead><tr><th>Device</th><th>Model</th><th>Family</th><th>Serial</th><th class="r">Capacity</th><th class="r">Temp</th><th class="r">Power-On</th><th class="r">RPM</th><th>Form</th><th>Proto</th><th>Health</th></tr></thead><tbody id="disk-tbody"></tbody></table></div>
+    <div class="card" style="overflow-x:auto"><table class="tbl disk-tbl"><thead><tr><th>Device</th><th>Media</th><th>Model</th><th>Serial</th><th class="r">Capacity</th><th class="r">Temp</th><th class="r">Power-On</th><th class="r">RPM</th><th>Form</th><th>Proto</th><th>Health</th></tr></thead><tbody id="disk-tbody"></tbody></table></div>
 </section>
 <section id="pools"><div class="section-title">ZFS Pools <span class="badge h-on" id="pool-count-badge"></span></div><div id="pool-cards"></div></section>
 <section id="datasets">
@@ -168,6 +239,11 @@ section{margin-bottom:1.5rem}
     <div class="section-title">Alerts</div>
     <div id="alert-active" class="alert-list" style="margin-bottom:.65rem"></div>
     <div class="card"><div class="card-label">Log</div><div id="alert-log" class="alert-list" style="margin-top:.4rem"></div></div>
+</section>
+<section id="logs-section" style="display:none">
+    <div class="section-title">Kernel &amp; Storage Errors <span class="badge h-flt" id="log-count-badge">0</span></div>
+    <div class="section-sub">Recent I/O, SMART, ZFS and filesystem errors from the kernel ring buffer</div>
+    <div class="card"><div id="log-list" class="log-list"></div></div>
 </section>
 <section id="ram-section" style="display:none">
     <div class="section-title">Memory</div>
@@ -210,11 +286,14 @@ const scoreLabel=s=>{if(typeof s!=='number')return'';return s>=90?'Excellent':s>
 const relTime=ts=>{const s=Math.floor(Date.now()/1000-ts);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'};
 const fmtUptime=sec=>{if(!sec)return'';const d=Math.floor(sec/86400),h=Math.floor((sec%86400)/3600);return d>0?d+'d '+h+'h':h+'h '+Math.floor((sec%3600)/60)+'m'};
 const SEAGATE=new Set([1,7,195]);
+const mediaBadge=m=>{if(!m)return'';const l={hdd:'HDD',ssd:'SSD',nvme:'NVMe',usb:'USB',sd:'SD',emmc:'eMMC',unknown:'?'}[m]||m.toUpperCase();return`<span class="mb mb-${m}">${l}</span>`};
+const roleBadges=r=>(r||[]).map(x=>`<span class="rb rb-${x}">${x==='os'?'OS':x==='boot'?'BOOT':x}</span>`).join(' ');
 
 let ws=null, selectedServer=null, servers=[], settingsData={};
-const state={disks:[],pools:[],datasets:[],snapshots:[],ioRates:{},poolMap:{},systemInfo:{},alertsActive:[],alertLog:[]};
+const state={disks:[],pools:[],datasets:[],snapshots:[],ioRates:{},poolMap:{},systemInfo:{},alertsActive:[],alertLog:[],logErrors:[]};
 const charts={};
 let chartsReady=false;
+let fleetChart=null;
 
 const POLL_IO=3000,CHART_WINDOW=3*60*1000;
 
@@ -223,16 +302,16 @@ const POLL_IO=3000,CHART_WINDOW=3*60*1000;
 const CHART_OPTS=()=>({responsive:true,maintainAspectRatio:false,
     animation:{duration:POLL_IO,easing:'linear'},animations:{y:{duration:0}},
     interaction:{mode:'nearest',axis:'x',intersect:false},
-    plugins:{legend:{display:true,position:'top',labels:{color:'#7a879e',boxWidth:10,boxHeight:2,font:{size:10}}},tooltip:{backgroundColor:'#131c2e',borderColor:'#1e2d44',borderWidth:1,titleColor:'#d4dae6',bodyColor:'#d4dae6',bodyFont:{family:"'SF Mono',monospace",size:10}}},
-    scales:{x:{type:'linear',ticks:{callback:v=>new Date(v).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}),maxTicksLimit:6,color:'#7a879e',font:{size:9}},grid:{color:'#1e2d4418'}},y:{ticks:{color:'#7a879e',font:{size:9},maxTicksLimit:6},grid:{color:'#1e2d4418'},beginAtZero:true}}});
+    plugins:{legend:{display:true,position:'top',labels:{color:'#8a8a93',boxWidth:10,boxHeight:2,font:{size:10}}},tooltip:{backgroundColor:'#1a1a1d',borderColor:'#2b2b31',borderWidth:1,titleColor:'#eaeaec',bodyColor:'#eaeaec',bodyFont:{family:"'SF Mono',monospace",size:10}}},
+    scales:{x:{type:'linear',ticks:{callback:v=>new Date(v).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}),maxTicksLimit:6,color:'#8a8a93',font:{size:9}},grid:{color:'#2b2b3118'}},y:{ticks:{color:'#8a8a93',font:{size:9},maxTicksLimit:6},grid:{color:'#2b2b3118'},beginAtZero:true}}});
 
 function mkChart(id,l1,l2,c1,c2){const ctx=document.getElementById(id);if(!ctx)return null;return new Chart(ctx,{type:'line',data:{datasets:[{label:l1,data:[],borderColor:c1,backgroundColor:c1+'15',borderWidth:1.5,pointRadius:0,fill:true,tension:.35},{label:l2,data:[],borderColor:c2,backgroundColor:c2+'15',borderWidth:1.5,pointRadius:0,fill:true,tension:.35}]},options:CHART_OPTS()})}
 
 function initCharts(){
     if(typeof Chart==='undefined'){document.querySelectorAll('.chart-container').forEach(el=>{el.innerHTML='<div class="chart-unavail">Chart library unavailable</div>'});return}
     try{
-        charts.tp=mkChart('chart-throughput','Read','Write','#3b82f6','#f97316');
-        charts.iops=mkChart('chart-iops','Read','Write','#06b6d4','#a855f7');
+        charts.tp=mkChart('chart-throughput','Read','Write','#14b8a6','#db6d28');
+        charts.iops=mkChart('chart-iops','Read','Write','#38bdf8','#a371f7');
         if(charts.tp){charts.tp.options.scales.y.ticks.callback=Bps;charts.tp.options.plugins.tooltip.callbacks={label:c=>c.dataset.label+': '+Bps(c.parsed.y)}}
         chartsReady=true;
     }catch(e){console.error('Chart init:',e)}
@@ -254,7 +333,54 @@ function appendIO(rates,ts){if(!chartsReady||!rates)return;const t=ts*1000;let r
 
 /* ── Fleet Rendering ─────────────────────────────────────────────────── */
 
+function renderFleetOverview(){
+    const totUsable=servers.reduce((a,s)=>a+(s.total_usable||0),0);
+    const totUsed=servers.reduce((a,s)=>a+(s.total_used||0),0);
+    const totRaw=servers.reduce((a,s)=>a+(s.total_raw||0),0);
+    const online=servers.filter(s=>s.online).length;
+    const degraded=servers.filter(s=>s.online&&(s.degraded||s.crit_alert_count>0)).length;
+    const alerts=servers.reduce((a,s)=>a+(s.alert_count||0),0);
+    const kerr=servers.reduce((a,s)=>a+(s.log_error_count||0),0);
+    const free=Math.max(0,totUsable-totUsed);
+    const pctUsed=totUsable>0?(totUsed/totUsable*100):0;
+    const poolNodes=servers.filter(s=>s.pool_count>0).length;
+    const uc=pctUsed>90?'var(--red)':pctUsed>75?'var(--yellow)':'var(--accent)';
+    const ucHex=pctUsed>90?'#f85149':pctUsed>75?'#d29922':'#14b8a6';
+    document.getElementById('donut-pct').textContent=totUsable>0?pctUsed.toFixed(0)+'%':'—';
+    const ctx=document.getElementById('fleet-donut');
+    if(ctx&&typeof Chart!=='undefined'){
+        const data=totUsable>0?[totUsed,free]:[0,1];
+        try{
+            if(!fleetChart){
+                fleetChart=new Chart(ctx,{type:'doughnut',data:{labels:['Used','Free'],datasets:[{data,backgroundColor:[ucHex,'#242428'],borderWidth:0,hoverOffset:0}]},options:{cutout:'76%',responsive:true,maintainAspectRatio:false,animation:{duration:600},plugins:{legend:{display:false},tooltip:{enabled:totUsable>0,callbacks:{label:c=>c.label+': '+B(c.parsed)},backgroundColor:'#1a1a1d',borderColor:'#2b2b31',borderWidth:1,titleColor:'#eaeaec',bodyColor:'#eaeaec',bodyFont:{family:"'SF Mono',monospace",size:11}}}}});
+            }else{
+                fleetChart.data.datasets[0].data=data;
+                fleetChart.data.datasets[0].backgroundColor=[ucHex,'#242428'];
+                fleetChart.options.plugins.tooltip.enabled=totUsable>0;
+                fleetChart.update();
+            }
+        }catch(e){console.error('Donut:',e)}
+    }
+    document.getElementById('sp-used').textContent=totUsable>0?B(totUsed):'—';
+    document.getElementById('sp-cap').textContent=totUsable>0?B(totUsable):'no pools';
+    document.getElementById('sp-sub').textContent=totUsable>0?`ZFS pool capacity across ${poolNodes} node${poolNodes!==1?'s':''}`:'No ZFS pools reported';
+    const spf=document.getElementById('sp-bar-fill');spf.style.width=pctUsed.toFixed(1)+'%';spf.style.background=uc;
+    document.getElementById('sp-legend').innerHTML=totUsable>0?
+        `<span><i style="background:${uc}"></i>Used <b>${B(totUsed)}</b></span><span><i style="background:var(--surface3)"></i>Free <b>${B(free)}</b></span><span><i style="background:var(--text2)"></i>Raw disks <b>${B(totRaw)}</b></span>`
+        :'<span>No ZFS pool storage reported by any node</span>';
+    const kpi=(l,v,sub)=>`<div class="kpi"><span class="kpi-l">${l}</span><span class="kpi-v">${v}</span>${sub?`<span class="kpi-sub">${sub}</span>`:''}</div>`;
+    document.getElementById('kpi-strip').innerHTML=
+        kpi('Nodes',`${online}<small>/${servers.length}</small>`,'online')+
+        kpi('Capacity',B(totUsable),'usable')+
+        kpi('Used',`<span style="color:${uc}">${pctUsed.toFixed(0)}%</span>`,B(totUsed))+
+        kpi('Free',B(free),'available')+
+        kpi('Degraded',`<span style="color:${degraded?'var(--red)':'var(--green)'}">${degraded}</span>`,degraded?'attention':'healthy')+
+        kpi('Alerts',`<span style="color:${alerts?'var(--yellow)':'var(--text)'}">${alerts}</span>`,'active')+
+        kpi('Errors',`<span style="color:${kerr?'var(--red)':'var(--text)'}">${kerr}</span>`,'kernel');
+}
+
 function renderFleet(){
+    renderFleetOverview();
     const el=document.getElementById('fleet-cards'),badge=document.getElementById('fleet-count');
     if(!servers||!servers.length){el.innerHTML='<div class="empty">Waiting for agents to connect...</div>';badge.textContent='0';return}
     badge.textContent=servers.length;
@@ -262,16 +388,29 @@ function renderFleet(){
         const on=s.online,up=s.total_usable>0?(s.total_used/s.total_usable*100):0;
         const bc=up>90?'var(--red)':up>75?'var(--yellow)':'var(--accent)';
         const upStr=fmtUptime(s.uptime_seconds||0);
-        const ac=s.alert_count||0;
-        return`<div class="card fleet-card${on?'':' offline'}" onclick="document.getElementById('server-select').value='${s.hostname}';switchServer('${s.hostname}')">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-                <span style="font-weight:700;font-family:var(--mono);font-size:.95rem">${s.hostname}</span>
-                <span class="hb ${on?'h-on':'h-flt'}">${on?'ONLINE':'OFFLINE'}</span>
+        const ac=s.alert_count||0,deg=on&&s.degraded,ramPct=s.ram_total>0?((s.ram_total-s.ram_available)/s.ram_total*100):0;
+        let sb;
+        if(!on)sb='<span class="hb h-flt">OFFLINE</span>';
+        else if(s.pool_status==='FAULTED')sb='<span class="hb h-flt">FAULTED</span>';
+        else if(s.pool_status==='DEGRADED'||s.failed_disks>0)sb='<span class="hb h-deg">DEGRADED</span>';
+        else sb='<span class="hb h-on">ONLINE</span>';
+        const dotCol=!on?'var(--text2)':s.pool_status==='FAULTED'?'var(--red)':(s.pool_status==='DEGRADED'||s.failed_disks>0)?'var(--yellow)':'var(--green)';
+        const usage=s.total_usable>0
+            ?`<div class="nr-usage-top"><span>${B(s.total_used)} / ${B(s.total_usable)}</span><span class="nr-pct">${up.toFixed(0)}%</span></div><div class="nr-bar"><div class="nr-bar-fill" style="width:${up.toFixed(1)}%;background:${bc}"></div></div>`
+            :`<div class="nr-usage-empty">No pool storage</div>`;
+        const subline=s.cpu_model?s.cpu_model.substring(0,42):(upStr?'up '+upStr:'');
+        return`<div class="node-row${on?'':' offline'}${deg?' degraded':''}" onclick="document.getElementById('server-select').value='${s.hostname}';switchServer('${s.hostname}')">
+            <span class="nr-dot" style="background:${dotCol}"></span>
+            <div class="nr-name"><span class="nr-host">${s.hostname}</span><span class="nr-cpu">${subline}</span></div>
+            <div class="nr-usage">${usage}</div>
+            <div class="nr-metrics">
+                <div class="nr-metric"><span class="nr-ml">Disks</span><span class="nr-mv">${s.disk_count}${s.failed_disks>0?` <span style="color:var(--red)">-${s.failed_disks}</span>`:''}</span></div>
+                <div class="nr-metric"><span class="nr-ml">Pools</span><span class="nr-mv">${s.pool_count}</span></div>
+                <div class="nr-metric"><span class="nr-ml">RAM</span><span class="nr-mv">${s.ram_total>0?ramPct.toFixed(0)+'%':'—'}</span></div>
+                <div class="nr-metric"><span class="nr-ml">Alerts</span><span class="nr-mv" style="color:${ac>0?'var(--yellow)':'var(--text2)'}">${ac}</span></div>
+                <div class="nr-metric"><span class="nr-ml">Kerr</span><span class="nr-mv" style="color:${s.log_error_count>0?'var(--red)':'var(--text2)'}">${s.log_error_count||0}</span></div>
             </div>
-            ${s.total_usable>0?`<div style="font-size:.8rem;margin-bottom:.3rem">${B(s.total_used)} / ${B(s.total_usable)}</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${up.toFixed(1)}%;background:${bc}"></div></div>`:'<div style="font-size:.8rem;color:var(--text2);margin-bottom:.3rem">No pool data</div>'}
-            <div style="font-size:.72rem;color:var(--text2);margin-top:.4rem">${s.disk_count} disk${s.disk_count!==1?'s':''} · ${s.pool_count} pool${s.pool_count!==1?'s':''} · <span style="color:${ac>0?'var(--red)':'var(--green)'}">${ac} alert${ac!==1?'s':''}</span></div>
-            ${s.cpu_model?`<div style="font-size:.65rem;color:var(--text2);margin-top:.2rem">${s.cpu_model.substring(0,45)}</div>`:''}
-            ${upStr?`<div style="font-size:.65rem;color:var(--text2)">Up ${upStr}</div>`:''}
+            ${sb}
         </div>`}).join('');
 }
 
@@ -343,9 +482,9 @@ function renderDisks(disks){
         let dtc='dtb';if(proto.includes('SAS')||proto.includes('SCSI'))dtc+=' dtb-sas';else if(proto.includes('NVME'))dtc+=' dtb-nv';
         const ht=d.health===true?'PASSED':d.health===false?'FAILED':'N/A';
         const hs=d.health_score!=null?d.health_score:'-';
-        const hasSmart=d.health===true||d.health===false||(d.smart_attributes&&d.smart_attributes.length)||(d.sas_error_counters);
-        const model=d.device_model||d.model||'—',family=d.model_family||'—',serial=d.serial_number||d.serial||'—';
-        return`<tr class="${hasSmart?'disk-row':''}" ${hasSmart?`onclick="toggleDiskDetail(this,${i})"`:''} style="${hasSmart?'':'cursor:default;opacity:.7'}"><td title="/dev/${d.name}">/dev/${d.name}</td><td title="${model}">${model}</td><td title="${family}">${family}</td><td title="${serial}" style="font-family:var(--mono);font-size:.68rem">${serial}</td><td class="r" title="${Br(d.user_capacity||d.size)}">${Br(d.user_capacity||d.size)}</td><td class="r ${tc(d.temperature)}" title="${d.temperature!=null?d.temperature+'°C / '+cToF(d.temperature)+'°F':'—'}">${d.temperature!=null?cToF(d.temperature)+'°F':'—'}</td><td class="r" title="${fmtH(d.power_on_hours)}">${fmtH(d.power_on_hours)}</td><td class="r">${d.rotation_rate||'—'}</td><td>${fmtForm(d.form_factor)}</td><td title="${proto||'?'}"><span class="${dtc}">${proto||'?'}</span></td><td><span class="score-badge" style="background:${scoreBg(hs)};color:${scoreCol(hs)}" title="${scoreLabel(hs)} — SMART ${ht}">${hs}/100</span></td></tr>`}).join('');
+        const model=d.device_model||d.model||'—',serial=d.serial_number||d.serial||'—';
+        const mediaCell=`${mediaBadge(d.media_type)}${d.roles&&d.roles.length?' '+roleBadges(d.roles):''}`;
+        return`<tr class="disk-row" onclick="toggleDiskDetail(this,${i})"><td title="/dev/${d.name}">/dev/${d.name}</td><td style="white-space:nowrap">${mediaCell}</td><td title="${model}">${model}</td><td title="${serial}" style="font-family:var(--mono);font-size:.68rem">${serial}</td><td class="r" title="${Br(d.user_capacity||d.size)}">${Br(d.user_capacity||d.size)}</td><td class="r ${tc(d.temperature)}" title="${d.temperature!=null?d.temperature+'°C / '+cToF(d.temperature)+'°F':'—'}">${d.temperature!=null?cToF(d.temperature)+'°F':'—'}</td><td class="r" title="${fmtH(d.power_on_hours)}">${fmtH(d.power_on_hours)}</td><td class="r">${d.rotation_rate||'—'}</td><td>${fmtForm(d.form_factor)}</td><td title="${proto||'?'}"><span class="${dtc}">${proto||'?'}</span></td><td><span class="score-badge" style="background:${scoreBg(hs)};color:${scoreCol(hs)}" title="${scoreLabel(hs)} — SMART ${ht}">${hs}/100</span></td></tr>`}).join('');
     if(_expanded.disks.size){disks.forEach((d,i)=>{if(_expanded.disks.has(d.name)){const rows=el.querySelectorAll('.disk-row');if(rows[i])toggleDiskDetail(rows[i],i)}})}
 }
 
@@ -373,6 +512,20 @@ function toggleDiskDetail(row,idx){
         sasHtml+='</tbody></table></div>';
     }
     if(d.grown_defect_count!=null)sasHtml+=`<div style="margin-top:.4rem;font-size:.75rem"><strong>Grown Defects:</strong> <span style="color:${d.grown_defect_count>0?'var(--red)':'var(--green)'};font-weight:600">${d.grown_defect_count}</span></div>`;
+    let mediaHtml='';
+    if(d.media_health){
+        const mh=d.media_health,life=mh.life_used_pct,lifeCol=life>=80?'var(--red)':life>=50?'var(--yellow)':'var(--green)';
+        const label=d.media_type==='usb'?'USB Flash':d.media_type==='emmc'?'eMMC':'SD Card';
+        mediaHtml=`<div style="margin-top:.65rem"><div class="card-label" style="margin-bottom:.35rem">${label} Info</div><div class="mh-grid">
+            ${mh.card_name?`<div class="si-item"><div class="si-l">Card Name</div><div class="si-v">${mh.card_name}</div></div>`:''}
+            ${mh.card_type?`<div class="si-item"><div class="si-l">Type</div><div class="si-v">${mh.card_type}</div></div>`:''}
+            ${mh.manfid?`<div class="si-item"><div class="si-l">Mfr ID</div><div class="si-v">${mh.manfid}</div></div>`:''}
+            ${mh.date?`<div class="si-item"><div class="si-l">Mfg Date</div><div class="si-v">${mh.date}</div></div>`:''}
+            <div class="si-item"><div class="si-l">Read-Only</div><div class="si-v" style="color:${mh.read_only?'var(--red)':'var(--green)'}">${mh.read_only?'YES — WORN OUT':'No'}</div></div>
+            ${mh.pre_eol?`<div class="si-item"><div class="si-l">EOL Status</div><div class="si-v" style="color:${mh.pre_eol==='normal'?'var(--green)':mh.pre_eol==='warning'?'var(--yellow)':'var(--red)'}">${mh.pre_eol.toUpperCase()}</div></div>`:''}
+        </div>
+        ${life!=null?`<div style="margin-top:.55rem"><div class="si-l">Estimated Life Used — ${life}%</div><div class="wear-bar"><div class="wear-fill" style="width:${Math.min(100,life)}%;background:${lifeCol}"></div></div></div>`:`<div style="margin-top:.5rem;font-size:.7rem;color:var(--text2)">${d.media_type==='sd'?'SD cards expose no wear telemetry — health is inferred from read-only status and kernel I/O errors.':d.media_type==='usb'?'USB flash exposes no wear telemetry — monitored via kernel I/O errors.':''}</div>`}</div>`;
+    }
     const detail=document.createElement('tr');detail.className='disk-detail-row';
     detail.innerHTML=`<td colspan="11"><div class="disk-detail-inner">
         <div class="si-grid">
@@ -382,11 +535,11 @@ function toggleDiskDetail(row,idx){
             <div class="si-item"><div class="si-l">SMART Status</div><div class="si-v">${d.health===true?'PASSED':d.health===false?'FAILED':'N/A'}</div></div>
             <div class="si-item"><div class="si-l">Health Score</div><div class="si-v">${d.health_score!=null?d.health_score+'/100 — '+scoreLabel(d.health_score):'—'}</div></div>
         </div>
-        ${smartHtml}${sasHtml}${!smartHtml&&!sasHtml?'<div class="empty">No SMART data</div>':''}
-        <div style="margin-top:.75rem;display:flex;gap:.4rem">
+        ${smartHtml}${sasHtml}${mediaHtml}${!smartHtml&&!sasHtml&&!mediaHtml?'<div class="empty">No SMART or media data available</div>':''}
+        ${(d.health!=null||(d.smart_attributes&&d.smart_attributes.length))?`<div style="margin-top:.75rem;display:flex;gap:.4rem">
             <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();runSmartTest('/dev/${d.name}','short')">Short Self-Test</button>
             <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();runSmartTest('/dev/${d.name}','long')">Long Self-Test</button>
-        </div></div></td>`;
+        </div>`:''}</div></td>`;
     row.after(detail);
 }
 
@@ -466,6 +619,46 @@ function renderAlerts(data){
     document.getElementById('alert-log').innerHTML=state.alertLog.length?state.alertLog.slice(0,40).map(a=>`<div class="alert-item alert-${a.severity}"><span class="alert-time">${relTime(a.timestamp)}</span><span>${a.message}</span></div>`).join(''):'';
 }
 
+function renderLogErrors(errors){
+    const sec=document.getElementById('logs-section');
+    state.logErrors=errors||[];
+    const badge=document.getElementById('log-count-badge');
+    if(!state.logErrors.length){sec.style.display='none';return}
+    sec.style.display='';
+    badge.textContent=state.logErrors.length;
+    document.getElementById('log-list').innerHTML=state.logErrors.slice().reverse().map(e=>`<div class="log-item"><span class="lt" title="${e.time||''}">${e.time||'—'}</span><span class="lm">${(e.message||'').replace(/</g,'&lt;')}</span></div>`).join('');
+    renderDegradedBanner();
+}
+
+function renderDegradedBanner(){
+    const b=document.getElementById('degraded-banner');
+    b.className='banner';
+    if(selectedServer){
+        const crit=state.alertsActive.filter(a=>a.severity==='critical'),warn=state.alertsActive.filter(a=>a.severity==='warning');
+        const le=state.logErrors.length;
+        if(!crit.length&&!warn.length&&!le){return}
+        const sev=crit.length?'crit':'warn';
+        const parts=[];
+        if(crit.length)parts.push(`${crit.length} critical`);
+        if(warn.length)parts.push(`${warn.length} warning`);
+        if(le)parts.push(`${le} kernel error${le!==1?'s':''}`);
+        b.className='banner '+sev;
+        b.innerHTML=`<span class="b-pulse"></span><span>${selectedServer}: ${parts.join(' · ')}</span><span class="b-links">${crit.length||warn.length?'<span onclick="location.hash=\'alerts-section\'">Alerts</span>':''}${le?'<span onclick="location.hash=\'logs-section\'">Errors</span>':''}</span>`;
+    }else{
+        const bad=servers.filter(s=>s.online&&(s.degraded||s.crit_alert_count>0));
+        const warnS=servers.filter(s=>s.online&&!s.degraded&&!s.crit_alert_count&&(s.alert_count>0||s.log_error_count>0));
+        const offline=servers.filter(s=>!s.online);
+        if(!bad.length&&!warnS.length&&!offline.length){return}
+        const sev=bad.length?'crit':'warn';
+        const parts=[];
+        if(bad.length)parts.push(`<b>${bad.length}</b> server${bad.length!==1?'s':''} DEGRADED (${bad.map(s=>s.hostname).join(', ')})`);
+        if(offline.length)parts.push(`${offline.length} offline`);
+        if(warnS.length)parts.push(`${warnS.length} with warnings`);
+        b.className='banner '+sev;
+        b.innerHTML=`<span class="b-pulse"></span><span>${parts.join(' · ')}</span>`;
+    }
+}
+
 /* ── WebSocket ───────────────────────────────────────────────────────── */
 
 function connectWS(){
@@ -493,6 +686,7 @@ function handleMessage(msg){
             servers=(msg.servers||[]).sort((a,b)=>a.hostname.localeCompare(b.hostname,undefined,{numeric:true}));
             updateServerSelect();
             if(!selectedServer)renderFleet();
+            renderDegradedBanner();
             break;
         case 'settings':
             settingsData=msg.settings||{};
@@ -522,8 +716,11 @@ function handleMessage(msg){
         case 'system':
             if(msg.hostname===selectedServer){state.systemInfo=msg.info||{};renderRAM(state.systemInfo)}
             break;
+        case 'logs':
+            if(msg.hostname===selectedServer)renderLogErrors(msg.errors||[]);
+            break;
         case 'alerts':
-            if(msg.hostname===selectedServer)renderAlerts({active:msg.active||[],log:msg.log||[]});
+            if(msg.hostname===selectedServer){renderAlerts({active:msg.active||[],log:msg.log||[]});renderDegradedBanner()}
             break;
         case 'smarttest_result':
             if(msg.hostname===selectedServer)alert(msg.success?`${msg.test_type} test started on ${msg.device}.`:`Failed: ${msg.output||'Unknown error'}`);
@@ -546,6 +743,8 @@ function loadFullState(msg){
     renderRAM(state.systemInfo);
     if(h&&h.timestamps&&h.timestamps.length)loadHist(h);
     if(msg.alerts)renderAlerts(msg.alerts);
+    renderLogErrors((c.logs&&c.logs.errors)||[]);
+    renderDegradedBanner();
 }
 
 function switchServer(hostname){
@@ -555,9 +754,10 @@ function switchServer(hostname){
         document.getElementById('server-detail').style.display='';
         document.getElementById('detail-nav').style.display='flex';
         document.title='ZPulse — '+selectedServer;
-        state.disks=[];state.pools=[];state.datasets=[];state.snapshots=[];state.systemInfo={};state.alertsActive=[];state.alertLog=[];
+        state.disks=[];state.pools=[];state.datasets=[];state.snapshots=[];state.systemInfo={};state.alertsActive=[];state.alertLog=[];state.logErrors=[];
         _expanded.pools.clear();_expanded.disks.clear();_expanded.datasets.clear();
-        destroyCharts();initCharts();
+        document.getElementById('logs-section').style.display='none';
+        destroyCharts();initCharts();renderDegradedBanner();
         if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:'subscribe',hostname:selectedServer}));
     }else{
         document.getElementById('fleet').style.display='';
@@ -566,6 +766,7 @@ function switchServer(hostname){
         document.title='ZPulse — Fleet';
         destroyCharts();
         renderFleet();
+        renderDegradedBanner();
     }
 }
 

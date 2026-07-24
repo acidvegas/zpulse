@@ -289,18 +289,35 @@ def get_server_list():
 		pools = pools_msg.get('pools', []) if isinstance(pools_msg, dict) else []
 		sys_msg = a.current.get('system', {})
 		sys_info = sys_msg.get('info', {}) if isinstance(sys_msg, dict) else {}
+		logs_msg = a.current.get('logs', {})
+		log_errors = logs_msg.get('errors', []) if isinstance(logs_msg, dict) else []
+
+		bad_pools    = [p for p in pools if p.get('health') not in ('ONLINE', '', None)]
+		failed_disks = sum(1 for d in disks if d.get('health') is False)
+		crit_alerts  = sum(1 for al in a.alerts_active if al.get('severity') == 'critical')
+		pool_states  = {p.get('health') for p in pools}
+		worst_pool   = ('FAULTED' if 'FAULTED' in pool_states else 'DEGRADED' if 'DEGRADED' in pool_states
+		                else 'ONLINE' if pools else '')
+
 		out.append({
-			'hostname'       : hn,
-			'online'         : a.online,
-			'last_seen'      : a.last_seen,
-			'disk_count'     : len(disks),
-			'pool_count'     : len(pools),
-			'alert_count'    : len(a.alerts_active),
-			'total_raw'      : sum(d.get('size', 0) for d in disks),
-			'total_usable'   : sum(p.get('size', 0) for p in pools),
-			'total_used'     : sum(p.get('allocated', 0) for p in pools),
-			'cpu_model'      : sys_info.get('cpu_model', ''),
-			'uptime_seconds' : sys_info.get('uptime_seconds', 0),
+			'hostname'        : hn,
+			'online'          : a.online,
+			'last_seen'       : a.last_seen,
+			'disk_count'      : len(disks),
+			'pool_count'      : len(pools),
+			'alert_count'     : len(a.alerts_active),
+			'crit_alert_count': crit_alerts,
+			'degraded'        : bool(bad_pools) or failed_disks > 0,
+			'failed_disks'    : failed_disks,
+			'pool_status'     : worst_pool,
+			'log_error_count' : len(log_errors),
+			'total_raw'       : sum(d.get('size', 0) for d in disks),
+			'total_usable'    : sum(p.get('size', 0) for p in pools),
+			'total_used'      : sum(p.get('allocated', 0) for p in pools),
+			'cpu_model'       : sys_info.get('cpu_model', ''),
+			'ram_total'       : sys_info.get('ram_total', 0),
+			'ram_available'   : sys_info.get('ram_available', 0),
+			'uptime_seconds'  : sys_info.get('uptime_seconds', 0),
 		})
 	return out
 
